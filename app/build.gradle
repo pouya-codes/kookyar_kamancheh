@@ -23,8 +23,8 @@ android {
         applicationId 'com.PouyaApp.kookyarkamancheh'
         minSdk 21
         targetSdk 35
-        versionName '2.3.0'
-        versionCode 23
+        versionName '2.4.0'
+        versionCode 24
         
         vectorDrawables.useSupportLibrary = true
     }

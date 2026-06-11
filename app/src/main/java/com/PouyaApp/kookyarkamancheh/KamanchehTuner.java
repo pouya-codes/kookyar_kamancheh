@@ -35,10 +35,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.RadioButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +45,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import com.kookyar.common.PersianReshape;
 import com.kookyar.common.PitchView;
@@ -65,12 +65,11 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
 
     private PdUiDispatcher dispatcher;
     public String fonts = "BZar.ttf";
-    private ImageView ivKamancheh;
+    private LinearLayout ivKamancheh;
     private Button Kamancheh1, Kamancheh2, Kamancheh3, Kamancheh4;
-    private RadioButton miLaReSolRB, reLaReLaRB, miLaMiLaRB, reLaReSolRB;
     private TextView pitchLabel;
     private PitchView pitchView;
-    private CheckBox tuning;
+    private MaterialSwitch tuning;
     private Spinner kookChangeSpinner;
     private Boolean kookSelected = false;
     OnSharedPreferenceChangeListener listener;
@@ -212,7 +211,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
 
         Typeface face = Typeface.createFromAsset(getAssets(), "font/" + fonts);
 
-        ivKamancheh = (ImageView) findViewById(R.id.ivkamancheh);
+        ivKamancheh = (LinearLayout) findViewById(R.id.layout_sim);
         Kamancheh1 = (Button) findViewById(R.id.kamancheh_1);
         Kamancheh1.setOnClickListener(this);
         Kamancheh1.setTypeface(face);
@@ -236,25 +235,11 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         pitchLabel = (TextView) findViewById(R.id.pitch_label);
         pitchView = (PitchView) findViewById(R.id.pitch_view);
 
-        miLaReSolRB = (RadioButton) findViewById(R.id.MilaReSolRB);
-        miLaReSolRB.setOnClickListener(this);
-        miLaReSolRB.setTypeface(face);
-        miLaReSolRB.setText(PersianReshape.reshape(miLaReSolRB.getText().toString()));
-
-        reLaReLaRB = (RadioButton) findViewById(R.id.ReLaRelaRB);
-        reLaReLaRB.setOnClickListener(this);
-        reLaReLaRB.setTypeface(face);
-        reLaReLaRB.setText(PersianReshape.reshape(reLaReLaRB.getText().toString()));
-
-        miLaMiLaRB = (RadioButton) findViewById(R.id.MiLaMilaRB);
-        miLaMiLaRB.setOnClickListener(this);
-        miLaMiLaRB.setTypeface(face);
-        miLaMiLaRB.setText(PersianReshape.reshape(miLaMiLaRB.getText().toString()));
-
-        reLaReSolRB = (RadioButton) findViewById(R.id.ReLaReSolRB);
-        reLaReSolRB.setOnClickListener(this);
-        reLaReSolRB.setTypeface(face);
-        reLaReSolRB.setText(PersianReshape.reshape(reLaReSolRB.getText().toString()));
+        Spinner kookSpinner = (Spinner) findViewById(R.id.kookSpiner);
+        ArrayAdapter<CharSequence> kookAdapter = ArrayAdapter.createFromResource(this, R.array.kouk, R.layout.spinner_item);
+        kookAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        kookSpinner.setAdapter(kookAdapter);
+        kookSpinner.setOnItemSelectedListener(this);
 
         getprefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         laFrequens = Integer.parseInt(getprefs.getString("ref", "440"));
@@ -275,7 +260,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         kookChangeSpinner.setOnItemSelectedListener(this);
         kookChangeSpinner.setSelection(getprefs.getInt("change", 0));
 
-        tuning = (CheckBox) findViewById(R.id.checkBox_tuning);
+        tuning = (MaterialSwitch) findViewById(R.id.checkBox_tuning);
         findViewById(R.id.tuning).setOnClickListener(this);
         tuning.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -391,7 +376,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         lastTunedIndex = -1;
         triggerNote((float) (Miditone[i] - nimpardehSub));
         pitchLabel.setText(PersianReshape.reshape(label));
-        ivKamancheh.setImageResource(imageRes);
+        ivKamancheh.setBackgroundResource(imageRes);
         YoYo.with(Techniques.Landing).duration(700).playOn(ivKamancheh);
         Button[] btns = {Kamancheh1, Kamancheh2, Kamancheh3, Kamancheh4};
         selectStringButton(btns[i]);
@@ -405,28 +390,9 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         String[] labels = {"\u0633\u06CC\u0645 \u0627\u0648\u0644", "\u0633\u06CC\u0645 \u062F\u0648\u0645", "\u0633\u06CC\u0645 \u0633\u0648\u0645", "\u0633\u06CC\u0645 \u0686\u0647\u0627\u0631\u0645"};
         triggerNote2((float) (Miditone[i] - nimpardehSub));
         pitchLabel.setText(PersianReshape.reshape(labels[i]));
-        ivKamancheh.setImageResource(imgs[i]);
+        ivKamancheh.setBackgroundResource(imgs[i]);
         Button[] btns = {Kamancheh1, Kamancheh2, Kamancheh3, Kamancheh4};
         selectStringButton(btns[i]);
-    }
-
-    private void selectKook(double[] tones, RadioButton checked) {
-        Miditone = tones;
-        miLaReSolRB.setChecked(checked == miLaReSolRB);
-        reLaReLaRB.setChecked(checked == reLaReLaRB);
-        miLaMiLaRB.setChecked(checked == miLaMiLaRB);
-        reLaReSolRB.setChecked(checked == reLaReSolRB);
-        kookSelected = true;
-        selectedStringIndex = -1;
-        lastTunedIndex = -1;
-        Kamancheh1.setEnabled(true);
-        Kamancheh2.setEnabled(true);
-        Kamancheh3.setEnabled(true);
-        Kamancheh4.setEnabled(true);
-        resetStringButtonTints();
-        ivKamancheh.setImageResource(R.drawable.kamancheh);
-        pitchView.setCenterPitch(0);
-        pitchLabel.setText(PersianReshape.reshape("سیم مورد نظر جهت کوک کردن را انتخاب کنید"));
     }
 
     @Override
@@ -435,27 +401,33 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         if (viewId == R.id.tuning) {
             tuning.setChecked(!tuning.isChecked());
         } else if (viewId == R.id.kamancheh_1) {
-            if (kookSelected) selectString(0, R.drawable.kamancheh1, "\u0633\u06CC\u0645 \u0627\u0648\u0644");
+            selectString(0, R.drawable.kamancheh1, "\u0633\u06CC\u0645 \u0627\u0648\u0644");
         } else if (viewId == R.id.kamancheh_2) {
-            if (kookSelected) selectString(1, R.drawable.kamancheh2, "\u0633\u06CC\u0645 \u062F\u0648\u0645");
+            selectString(1, R.drawable.kamancheh2, "\u0633\u06CC\u0645 \u062F\u0648\u0645");
         } else if (viewId == R.id.kamancheh_3) {
-            if (kookSelected) selectString(2, R.drawable.kamancheh3, "\u0633\u06CC\u0645 \u0633\u0648\u0645");
+            selectString(2, R.drawable.kamancheh3, "\u0633\u06CC\u0645 \u0633\u0648\u0645");
         } else if (viewId == R.id.kamancheh_4) {
-            if (kookSelected) selectString(3, R.drawable.kamancheh4, "\u0633\u06CC\u0645 \u0686\u0647\u0627\u0631\u0645");
-        } else if (viewId == R.id.MilaReSolRB) {
-            selectKook(new double[]{74, 67, 60, 53}, miLaReSolRB);
-        } else if (viewId == R.id.ReLaRelaRB) {
-            selectKook(new double[]{72, 67, 60, 55}, reLaReLaRB);
-        } else if (viewId == R.id.MiLaMilaRB) {
-            selectKook(new double[]{74, 67, 62, 55}, miLaMiLaRB);
-        } else if (viewId == R.id.ReLaReSolRB) {
-            selectKook(new double[]{72, 67, 60, 53}, reLaReSolRB);
+            selectString(3, R.drawable.kamancheh4, "\u0633\u06CC\u0645 \u0686\u0647\u0627\u0631\u0645");
         }
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (parent.getId() == R.id.spinnerKookChange) {
+        if (parent.getId() == R.id.kookSpiner) {
+            switch (position) {
+                case 0: Miditone = new double[]{74, 67, 60, 53}; break;
+                case 1: Miditone = new double[]{72, 67, 60, 55}; break;
+                case 2: Miditone = new double[]{74, 67, 62, 55}; break;
+                case 3: Miditone = new double[]{72, 67, 60, 53}; break;
+            }
+            kookSelected = true;
+            selectedStringIndex = -1;
+            lastTunedIndex = -1;
+            resetStringButtonTints();
+            ivKamancheh.setBackgroundResource(0);
+            pitchView.setCenterPitch(0);
+            pitchLabel.setText(PersianReshape.reshape("سیم مورد نظر جهت کوک کردن را انتخاب کنید"));
+        } else if (parent.getId() == R.id.spinnerKookChange) {
             switch (position) {
                 case 0: nimpardehSub = 0; break;
                 case 1: nimpardehSub = 0.5; break;

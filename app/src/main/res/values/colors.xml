@@ -18,5 +18,12 @@
     <item name="primaryColorDark" type="color">#FF303F9F</item>
     <item name="accentColor" type="color">#FFFFBB33</item>
     <item name="windowBackground" type="color">#FF1E1E1E</item>
-    <item name="dropdownBackground" type="color">#FF263238</item>
+    <item name="dropdownBackground" type="color">#FF2A2933</item>
+    <item name="surfaceColor" type="color">#FF121016</item>
+    <item name="cardColor" type="color">#FF1E1C26</item>
+    <item name="cardStroke" type="color">#FF35323F</item>
+    <item name="onSurface" type="color">#FFECEAF4</item>
+    <item name="onSurfaceVariant" type="color">#FFC7C3D2</item>
+    <item name="stringDefault" type="color">#FF2C2A38</item>
+    <item name="stringSelected" type="color">#FFFFBB33</item>
 </resources>

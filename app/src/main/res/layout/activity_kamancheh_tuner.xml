@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:background="@color/backgroundColor">
+    android:background="@color/surfaceColor">
 
     <include layout="@layout/app_bar" />
 
@@ -13,166 +13,166 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="12dp">
 
-        <RadioGroup
-            android:id="@+id/kamancheRG"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp">
+            app:cardBackgroundColor="@color/cardColor"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/cardStroke"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:padding="14dp">
 
-                <RadioButton
-                    android:id="@+id/MilaReSolRB"
-                    android:layout_width="0dp"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/milaReSol"
-                    android:textSize="15sp"
-                    android:textColor="@color/white"
-                    android:buttonTint="@color/accentColor" />
+                    android:text="@string/kook_select"
+                    android:textColor="@color/onSurfaceVariant"
+                    android:textSize="13sp"
+                    android:layout_marginBottom="8dp" />
 
-                <RadioButton
-                    android:id="@+id/ReLaRelaRB"
-                    android:layout_width="0dp"
+                <Spinner
+                    android:id="@+id/kookSpiner"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/spinner_background"
+                    android:popupBackground="@color/dropdownBackground"
+                    android:spinnerMode="dropdown" />
+
+                <Spinner
+                    android:id="@+id/spinnerKookChange"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/spinner_background"
+                    android:popupBackground="@color/dropdownBackground"
+                    android:spinnerMode="dropdown" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@color/cardStroke" />
+
+                <LinearLayout
+                    android:id="@+id/tuning"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/ReLaRela"
-                    android:textSize="15sp"
-                    android:textColor="@color/white"
-                    android:buttonTint="@color/accentColor" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/tuning"
+                        android:textColor="@color/onSurface"
+                        android:textSize="16sp" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/checkBox_tuning"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:clickable="false" />
+                </LinearLayout>
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/MiLaMilaRB"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/MiLaMila"
-                    android:textSize="15sp"
-                    android:textColor="@color/white"
-                    android:buttonTint="@color/accentColor" />
-
-                <RadioButton
-                    android:id="@+id/ReLaReSolRB"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/ReLaReSol"
-                    android:textSize="15sp"
-                    android:textColor="@color/white"
-                    android:buttonTint="@color/accentColor" />
-            </LinearLayout>
-        </RadioGroup>
-
-        <Spinner
-            android:id="@+id/spinnerKookChange"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/spinner_background"
-            android:popupBackground="@color/dropdownBackground"
-            android:spinnerMode="dropdown" />
-
-        <LinearLayout
-            android:id="@+id/tuning"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
-
-            <CheckBox
-                android:id="@+id/checkBox_tuning"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:clickable="false"
-                android:buttonTint="@color/accentColor" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="@string/tuning"
-                android:textColor="@color/green"
-                android:textSize="16sp" />
-        </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginBottom="8dp">
+            android:layout_marginTop="12dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/kamancheh_1"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
-                android:layout_height="52dp"
+                android:layout_height="54dp"
                 android:layout_weight="1"
-                android:layout_marginEnd="4dp"
-                android:enabled="false"
+                android:layout_marginEnd="6dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
                 android:text="@string/sim_1"
                 android:textSize="14sp"
-                android:textColor="@color/white"
-                app:backgroundTint="@color/primaryColorDark" />
+                android:textColor="@color/onSurface"
+                app:cornerRadius="16dp"
+                app:backgroundTint="@color/stringDefault" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/kamancheh_2"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
-                android:layout_height="52dp"
+                android:layout_height="54dp"
                 android:layout_weight="1"
-                android:layout_marginEnd="4dp"
-                android:enabled="false"
+                android:layout_marginEnd="6dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
                 android:text="@string/sim_2"
                 android:textSize="14sp"
-                android:textColor="@color/white"
-                app:backgroundTint="@color/primaryColorDark" />
+                android:textColor="@color/onSurface"
+                app:cornerRadius="16dp"
+                app:backgroundTint="@color/stringDefault" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/kamancheh_3"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
-                android:layout_height="52dp"
+                android:layout_height="54dp"
                 android:layout_weight="1"
-                android:layout_marginEnd="4dp"
-                android:enabled="false"
+                android:layout_marginEnd="6dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
                 android:text="@string/sim_3"
                 android:textSize="14sp"
-                android:textColor="@color/white"
-                app:backgroundTint="@color/primaryColorDark" />
+                android:textColor="@color/onSurface"
+                app:cornerRadius="16dp"
+                app:backgroundTint="@color/stringDefault" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/kamancheh_4"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
-                android:layout_height="52dp"
+                android:layout_height="54dp"
                 android:layout_weight="1"
-                android:enabled="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
                 android:text="@string/sim_4"
                 android:textSize="14sp"
-                android:textColor="@color/white"
-                app:backgroundTint="@color/primaryColorDark" />
+                android:textColor="@color/onSurface"
+                app:cornerRadius="16dp"
+                app:backgroundTint="@color/stringDefault" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/ivkamancheh"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/kamancheh" />
+            android:layout_marginTop="10dp"
+            android:background="@drawable/kamancheh"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/layout_sim"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:orientation="vertical" />
+        </LinearLayout>
     </LinearLayout>
 
     <TextView
@@ -180,8 +180,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         android:text=""
         android:textSize="18sp"
         android:textStyle="bold"
