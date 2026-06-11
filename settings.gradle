@@ -1,0 +1,10 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+includeBuild('../kookyar_common')
+include ':app'
+rootProject.name = "KookYaRKamancheh"
