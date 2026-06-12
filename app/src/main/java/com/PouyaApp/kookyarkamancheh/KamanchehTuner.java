@@ -54,7 +54,7 @@ import com.kookyar.common.PitchView;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 
-public class KamanchehTuner extends AppCompatActivity implements OnClickListener, OnItemSelectedListener {
+public class KamanchehTuner extends AppCompatActivity implements OnClickListener {
 
     private static final String TAG = "KookYaR";
     private static final int PERMISSION_REQUEST_RECORD_AUDIO = 1001;
@@ -70,8 +70,9 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
     private TextView pitchLabel;
     private PitchView pitchView;
     private MaterialSwitch tuning;
+    private Spinner kookSpinner;
     private Spinner kookChangeSpinner;
-    private Boolean kookSelected = false;
+    private boolean kookSelected = false;
     OnSharedPreferenceChangeListener listener;
     SharedPreferences getprefs;
     private int laFrequens = 440;
@@ -235,13 +236,22 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         pitchLabel = (TextView) findViewById(R.id.pitch_label);
         pitchView = (PitchView) findViewById(R.id.pitch_view);
 
-        Spinner kookSpinner = (Spinner) findViewById(R.id.kookSpiner);
+        getprefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+        kookSpinner = (Spinner) findViewById(R.id.kookSpiner);
         ArrayAdapter<CharSequence> kookAdapter = ArrayAdapter.createFromResource(this, R.array.kouk, R.layout.spinner_item);
         kookAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         kookSpinner.setAdapter(kookAdapter);
-        kookSpinner.setOnItemSelectedListener(this);
+        kookSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                applyKookPreset(position);
+            }
 
-        getprefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
         laFrequens = Integer.parseInt(getprefs.getString("ref", "440"));
         pitchView.setAFrequnse(laFrequens);
 
@@ -257,8 +267,30 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         ArrayAdapter<CharSequence> kookChangeAdapter = ArrayAdapter.createFromResource(this, R.array.kookChange, R.layout.spinner_item);
         kookChangeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         kookChangeSpinner.setAdapter(kookChangeAdapter);
-        kookChangeSpinner.setOnItemSelectedListener(this);
-        kookChangeSpinner.setSelection(getprefs.getInt("change", 0));
+        kookChangeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                applyTranspose(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        int savedKook = getprefs.getInt("kook", 0);
+        if (savedKook < 0 || savedKook >= kookAdapter.getCount()) {
+            savedKook = 0;
+        }
+        kookSpinner.setSelection(savedKook, false);
+        applyKookPreset(savedKook);
+
+        int savedTranspose = getprefs.getInt("change", 3);
+        if (savedTranspose < 0 || savedTranspose > 3) {
+            savedTranspose = 3;
+        }
+        kookChangeSpinner.setSelection(savedTranspose, false);
+        applyTranspose(savedTranspose);
 
         tuning = (MaterialSwitch) findViewById(R.id.checkBox_tuning);
         findViewById(R.id.tuning).setOnClickListener(this);
@@ -290,6 +322,54 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
     private void selectStringButton(Button selected) {
         resetStringButtonTints();
         selected.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFBB33")));
+    }
+
+    private void applyKookPreset(int position) {
+        switch (position) {
+            case 0:  Miditone = new double[]{76, 69, 62, 55}; break;   // می-لا-ر-سل
+            case 1:  Miditone = new double[]{76, 69, 62, 52}; break;   // شور: می-لا-ر-می
+            case 2:  Miditone = new double[]{76, 69, 64, 57}; break;   // ابوعطا: می-لا-می-لا
+            case 3:  Miditone = new double[]{76, 69, 62, 55}; break;   // بیات ترک: می-لا-ر-سل
+            case 4:  Miditone = new double[]{76, 69, 62, 57}; break;   // افشاری و ماهور: می-لا-ر-لا
+            case 5:  Miditone = new double[]{76, 69, 59, 55}; break;   // دشتی: می-لا-سی-سل
+            case 6:  Miditone = new double[]{76, 69, 62, 53.5}; break; // همایون و سه‌گاه: می-لا-ر-فا سری
+            case 7:  Miditone = new double[]{76, 69, 64, 57}; break;   // اصفهان: می-لا-می-لا
+            case 8:  Miditone = new double[]{76, 69, 64, 52}; break;   // شوشتری: می-لا-می-می
+            case 9:  Miditone = new double[]{76, 69, 62, 57}; break;   // چهارگاه: می-لا-ر-لا
+            case 10: Miditone = new double[]{74, 69, 62, 57}; break;   // ر-لا-ر-لا
+            case 11: Miditone = new double[]{76, 69, 64, 53.5}; break; // می-لا-می-فا سری
+            default: Miditone = new double[]{74, 67, 60, 53}; break;
+        }
+
+        kookSelected = true;
+        selectedStringIndex = -1;
+        lastTunedIndex = -1;
+        resetStringButtonTints();
+        ivKamancheh.setBackgroundResource(0);
+        pitchView.setCenterPitch(0);
+        pitchLabel.setText(PersianReshape.reshape("سیم مورد نظر جهت کوک کردن را انتخاب کنید"));
+
+        if (getprefs != null) {
+            getprefs.edit().putInt("kook", position).apply();
+        }
+    }
+
+    private void applyTranspose(int position) {
+        switch (position) {
+            case 0: nimpardehSub = 0; break;
+            case 1: nimpardehSub = 0.5; break;
+            case 2: nimpardehSub = 1; break;
+            case 3: nimpardehSub = 2; break;
+            default: nimpardehSub = 0; break;
+        }
+
+        if (selectedStringIndex >= 0) {
+            triggerNote2((float) (Miditone[selectedStringIndex] - nimpardehSub));
+        }
+
+        if (getprefs != null) {
+            getprefs.edit().putInt("change", position).apply();
+        }
     }
 
     private void initPd() throws IOException {
@@ -411,41 +491,4 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         }
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (parent.getId() == R.id.kookSpiner) {
-            switch (position) {
-                case 0: Miditone = new double[]{74, 67, 60, 53}; break;
-                case 1: Miditone = new double[]{72, 67, 60, 55}; break;
-                case 2: Miditone = new double[]{74, 67, 62, 55}; break;
-                case 3: Miditone = new double[]{72, 67, 60, 53}; break;
-            }
-            kookSelected = true;
-            selectedStringIndex = -1;
-            lastTunedIndex = -1;
-            resetStringButtonTints();
-            ivKamancheh.setBackgroundResource(0);
-            pitchView.setCenterPitch(0);
-            pitchLabel.setText(PersianReshape.reshape("سیم مورد نظر جهت کوک کردن را انتخاب کنید"));
-        } else if (parent.getId() == R.id.spinnerKookChange) {
-            switch (position) {
-                case 0: nimpardehSub = 0; break;
-                case 1: nimpardehSub = 0.5; break;
-                case 2: nimpardehSub = 1; break;
-                case 3: nimpardehSub = 2; break;
-            }
-            if (selectedStringIndex >= 0) {
-                triggerNote2((float) (Miditone[selectedStringIndex] - nimpardehSub));
-            }
-            if (getprefs != null) {
-                SharedPreferences.Editor editor = getprefs.edit();
-                editor.putInt("change", position);
-                editor.apply();
-            }
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-    }
 }
