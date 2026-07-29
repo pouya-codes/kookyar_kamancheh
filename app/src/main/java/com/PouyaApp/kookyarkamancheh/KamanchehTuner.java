@@ -21,9 +21,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuInflater;
@@ -50,6 +48,7 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 
 import com.kookyar.common.PersianReshape;
 import com.kookyar.common.PitchView;
+import com.kookyar.common.TunerPitchCoordinator;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
@@ -81,8 +80,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
     private double nimpardehSub = 0;
     private int selectedStringIndex = -1;
     private int lastTunedIndex = -1;
-    private final Handler pitchHandler = new Handler(Looper.getMainLooper());
-    private Runnable pitchResetRunnable;
+    private final TunerPitchCoordinator pitchCoordinator = new TunerPitchCoordinator();
 
     private double[] Miditone = new double[4];
 
@@ -198,7 +196,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
     @Override
     public void onDestroy() {
         super.onDestroy();
-        pitchHandler.removeCallbacksAndMessages(null);
+        pitchCoordinator.destroy();
         try {
             unbindService(pdConnection);
         } catch (Exception e) {
@@ -377,31 +375,33 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         int sampleRate = AudioParameters.suggestSampleRate();
         pdService.initAudio(sampleRate, 1, 2, 20.0f);
         start();
+        pitchCoordinator.setAudioStarter(() -> {
+            if (pdService != null && !pdService.isRunning()) {
+                pdService.startAudio();
+            }
+        });
 
         dispatcher = new PdUiDispatcher();
         PdBase.setReceiver(dispatcher);
         dispatcher.addListener("pitch", new PdListener.Adapter() {
             @Override
             public void receiveFloat(String source, final float x) {
-                if (pressure >= sensitiveLevel) {
-                    if (pitchResetRunnable != null) {
-                        pitchHandler.removeCallbacks(pitchResetRunnable);
-                    }
-                    float pitch = (float) Math.round(x * 1000) / 1000;
-                    pitchView.setCurrentPitch(pitch);
-
-                    if (tuning.isChecked() && kookSelected) {
-                        for (int i = 0; i < Miditone.length; i++) {
-                            double target = Miditone[i] - nimpardehSub;
-                            if (pitch >= target - 0.4 && pitch <= target + 0.4) {
-                                autoTune(i);
-                                break;
-                            }
-                        }
-                    }
-
-                    pitchResetRunnable = () -> pitchView.setCurrentPitch(12);
-                    pitchHandler.postDelayed(pitchResetRunnable, 2500);
+                if (pressure >= sensitiveLevel && pitchView.getCenterPitch() > 0) {
+                    final float pitch = (float) Math.round(x * 1000) / 1000;
+                    pitchCoordinator.onPitchInput(
+                            () -> {
+                                pitchView.setCurrentPitch(pitch);
+                                if (tuning.isChecked() && kookSelected) {
+                                    for (int i = 0; i < Miditone.length; i++) {
+                                        double target = Miditone[i] - nimpardehSub;
+                                        if (pitch >= target - 0.4 && pitch <= target + 0.4) {
+                                            autoTune(i);
+                                            break;
+                                        }
+                                    }
+                                }
+                            },
+                            () -> pitchView.setCurrentPitch(12));
                 }
             }
         });
@@ -430,14 +430,19 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
 
     private void triggerNote(float n) {
         float realMidi = midiToRealMidi(n);
+        pitchCoordinator.invalidatePitchReset();
         pitchView.setCenterPitch(realMidi);
         pitchView.setCurrentPitch(12);
         pitchView.setMidiRef(n);
-        PdBase.sendFloat("midinote", realMidi);
-        PdBase.sendBang("trigger");
+        final float midiForPd = realMidi;
+        pitchCoordinator.scheduleTrigger(() -> TunerPitchCoordinator.runPdSend(() -> {
+            PdBase.sendFloat("midinote", midiForPd);
+            PdBase.sendBang("trigger");
+        }));
     }
 
     private void triggerNote2(float n) {
+        pitchCoordinator.invalidatePitchReset();
         float realMidi = midiToRealMidi(n);
         pitchView.setCenterPitch(realMidi);
         pitchView.setMidiRef(n);
