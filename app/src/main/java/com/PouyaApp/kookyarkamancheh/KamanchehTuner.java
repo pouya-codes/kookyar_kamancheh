@@ -24,8 +24,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
@@ -46,6 +44,9 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.material.materialswitch.MaterialSwitch;
 
+import com.kookyar.common.FeatureBar;
+import com.kookyar.common.MetronomeLauncher;
+import com.kookyar.common.RadifLauncher;
 import com.kookyar.common.PersianReshape;
 import com.kookyar.common.PitchView;
 import com.kookyar.common.TunerPitchCoordinator;
@@ -86,27 +87,31 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
 
     private PdService pdService = null;
 
-    @Override
-    public boolean onCreateOptionsMenu(android.view.Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        MenuInflater blowUp = getMenuInflater();
-        blowUp.inflate(R.menu.kamancheh_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.help_tuner) {
-            Intent i = new Intent(KamanchehTuner.this, TunerHelp.class);
-            startActivity(i);
-        } else if (id == R.id.bazgasht) {
-            finish();
-        } else if (id == R.id.settings_menu) {
-            Intent j = new Intent(KamanchehTuner.this, Prefs.class);
-            startActivity(j);
-        }
-        return true;
+    /** Flat switcher: every feature is one tap from the tuner. */
+    private void initFeatureBar() {
+        FeatureBar featureBar = findViewById(R.id.feature_bar);
+        featureBar.setAccentColor(ContextCompat.getColor(this, R.color.accentColor));
+        featureBar.setInactiveColor(ContextCompat.getColor(this, R.color.onSurfaceVariant));
+        featureBar.setItems(
+                FeatureBar.Item.current(
+                        getString(com.kookyar.common.R.string.kookyar_feature_tuner),
+                        com.kookyar.common.R.drawable.ic_kookyar_tuner),
+                FeatureBar.Item.of(
+                        getString(com.kookyar.common.R.string.kookyar_feature_metronome),
+                        com.kookyar.common.R.drawable.ic_kookyar_metronome,
+                        () -> MetronomeLauncher.open(this)),
+                FeatureBar.Item.of(
+                        getString(com.kookyar.common.R.string.kookyar_feature_radif),
+                        com.kookyar.common.R.drawable.ic_kookyar_radif,
+                        () -> RadifLauncher.open(this)),
+                FeatureBar.Item.of(
+                        getString(com.kookyar.common.R.string.kookyar_feature_help),
+                        com.kookyar.common.R.drawable.ic_kookyar_help,
+                        () -> startActivity(new Intent(this, TunerHelp.class))),
+                FeatureBar.Item.of(
+                        getString(com.kookyar.common.R.string.kookyar_feature_settings),
+                        com.kookyar.common.R.drawable.ic_kookyar_settings,
+                        () -> startActivity(new Intent(this, Prefs.class))));
     }
 
     private void prefsListnner() {
@@ -307,6 +312,8 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         pitchLabel.setText(PersianReshape.reshape("سیم مورد نظر جهت کوک کردن را انتخاب کنید"));
 
         resetStringButtonTints();
+
+        initFeatureBar();
     }
 
     private void resetStringButtonTints() {

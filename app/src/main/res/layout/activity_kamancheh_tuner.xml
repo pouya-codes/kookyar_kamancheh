@@ -208,4 +208,10 @@
         </LinearLayout>
     </ScrollView>
 
+    <com.kookyar.common.FeatureBar
+        android:id="@+id/feature_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cardColor" />
+
 </LinearLayout>
