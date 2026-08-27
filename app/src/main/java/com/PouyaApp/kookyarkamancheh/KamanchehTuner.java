@@ -219,22 +219,22 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         Kamancheh1 = (Button) findViewById(R.id.kamancheh_1);
         Kamancheh1.setOnClickListener(this);
         Kamancheh1.setTypeface(face);
-        Kamancheh1.setText(PersianReshape.reshape(Kamancheh1.getText().toString()));
+        Kamancheh1.setText(PersianReshape.forDisplay(this, Kamancheh1.getText().toString()));
 
         Kamancheh2 = (Button) findViewById(R.id.kamancheh_2);
         Kamancheh2.setOnClickListener(this);
         Kamancheh2.setTypeface(face);
-        Kamancheh2.setText(PersianReshape.reshape(Kamancheh2.getText().toString()));
+        Kamancheh2.setText(PersianReshape.forDisplay(this, Kamancheh2.getText().toString()));
 
         Kamancheh3 = (Button) findViewById(R.id.kamancheh_3);
         Kamancheh3.setOnClickListener(this);
         Kamancheh3.setTypeface(face);
-        Kamancheh3.setText(PersianReshape.reshape(Kamancheh3.getText().toString()));
+        Kamancheh3.setText(PersianReshape.forDisplay(this, Kamancheh3.getText().toString()));
 
         Kamancheh4 = (Button) findViewById(R.id.kamancheh_4);
         Kamancheh4.setOnClickListener(this);
         Kamancheh4.setTypeface(face);
-        Kamancheh4.setText(PersianReshape.reshape(Kamancheh4.getText().toString()));
+        Kamancheh4.setText(PersianReshape.forDisplay(this, Kamancheh4.getText().toString()));
 
         pitchLabel = (TextView) findViewById(R.id.pitch_label);
         pitchView = (PitchView) findViewById(R.id.pitch_view);
@@ -309,7 +309,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
             }
         });
 
-        pitchLabel.setText(PersianReshape.reshape("سیم مورد نظر جهت کوک کردن را انتخاب کنید"));
+        pitchLabel.setText(PersianReshape.forDisplay(this, "سیم مورد نظر جهت کوک کردن را انتخاب کنید"));
 
         resetStringButtonTints();
 
@@ -352,7 +352,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         resetStringButtonTints();
         ivKamancheh.setBackgroundResource(0);
         pitchView.setCenterPitch(0);
-        pitchLabel.setText(PersianReshape.reshape("سیم مورد نظر جهت کوک کردن را انتخاب کنید"));
+        pitchLabel.setText(PersianReshape.forDisplay(this, "سیم مورد نظر جهت کوک کردن را انتخاب کنید"));
 
         if (getprefs != null) {
             getprefs.edit().putInt("kook", position).apply();
@@ -467,7 +467,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         selectedStringIndex = i;
         lastTunedIndex = -1;
         triggerNote((float) (Miditone[i] - nimpardehSub));
-        pitchLabel.setText(PersianReshape.reshape(label));
+        pitchLabel.setText(PersianReshape.forDisplay(this, label));
         ivKamancheh.setBackgroundResource(imageRes);
         YoYo.with(Techniques.Landing).duration(700).playOn(ivKamancheh);
         Button[] btns = {Kamancheh1, Kamancheh2, Kamancheh3, Kamancheh4};
@@ -481,7 +481,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         int[] imgs = {R.drawable.kamancheh1, R.drawable.kamancheh2, R.drawable.kamancheh3, R.drawable.kamancheh4};
         String[] labels = {"\u0633\u06CC\u0645 \u0627\u0648\u0644", "\u0633\u06CC\u0645 \u062F\u0648\u0645", "\u0633\u06CC\u0645 \u0633\u0648\u0645", "\u0633\u06CC\u0645 \u0686\u0647\u0627\u0631\u0645"};
         triggerNote2((float) (Miditone[i] - nimpardehSub));
-        pitchLabel.setText(PersianReshape.reshape(labels[i]));
+        pitchLabel.setText(PersianReshape.forDisplay(this, labels[i]));
         ivKamancheh.setBackgroundResource(imgs[i]);
         Button[] btns = {Kamancheh1, Kamancheh2, Kamancheh3, Kamancheh4};
         selectStringButton(btns[i]);

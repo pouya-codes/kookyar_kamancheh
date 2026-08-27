@@ -16,6 +16,6 @@ public class Help extends AppCompatActivity {
 
         TextView help = findViewById(R.id.helpTV);
         String str_tv = help.getText().toString();
-        help.setText(PersianReshape.reshape(str_tv));
+        help.setText(PersianReshape.forDisplay(this, str_tv));
     }
 }

@@ -17,7 +17,7 @@ public class TunerHelp extends AppCompatActivity {
         TextView tunerHelp = findViewById(R.id.tunerHelp);
         if (tunerHelp != null) {
             String str = tunerHelp.getText().toString();
-            tunerHelp.setText(PersianReshape.reshape(str));
+            tunerHelp.setText(PersianReshape.forDisplay(this, str));
         }
     }
 }
