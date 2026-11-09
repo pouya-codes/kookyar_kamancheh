@@ -1,5 +1,9 @@
 package com.PouyaApp.kookyarkamancheh;
 
+import com.kookyar.common.EdgeToEdge;
+import com.kookyar.common.TextPageActivity;
+import com.kookyar.common.KookyarFonts;
+import com.kookyar.common.Anim;
 import java.io.File;
 import java.io.IOException;
 
@@ -51,8 +55,6 @@ import com.kookyar.common.PersianReshape;
 import com.kookyar.common.PitchView;
 import com.kookyar.common.TunerPitchCoordinator;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 
 public class KamanchehTuner extends AppCompatActivity implements OnClickListener {
 
@@ -107,7 +109,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
                 FeatureBar.Item.of(
                         getString(com.kookyar.common.R.string.kookyar_feature_help),
                         com.kookyar.common.R.drawable.ic_kookyar_help,
-                        () -> startActivity(new Intent(this, TunerHelp.class))),
+                        () -> TextPageActivity.open(this, R.string.rahnama, R.string.TunerHelp)),
                 FeatureBar.Item.of(
                         getString(com.kookyar.common.R.string.kookyar_feature_settings),
                         com.kookyar.common.R.drawable.ic_kookyar_settings,
@@ -155,6 +157,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kamancheh_tuner);
+		EdgeToEdge.apply(this, findViewById(R.id.tuner_root), findViewById(R.id.app_bar), findViewById(R.id.feature_bar));
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         initGui();
         prefsListnner();
@@ -176,7 +179,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 initAudio();
             } else {
-                Toast.makeText(this, "دسترسی به میکروفون برای کار کردن کوک یار ضروری است", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, com.kookyar.common.R.string.kookyar_mic_required, Toast.LENGTH_LONG).show();
                 finish();
             }
         }
@@ -198,6 +201,24 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         pitchView.resume();
     }
 
+
+    /** Stop the microphone and audio thread while the screen is not visible. */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (pdService != null && !pdService.isRunning()) {
+            pdService.startAudio();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (pdService != null && pdService.isRunning()) {
+            pdService.stopAudio();
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -213,7 +234,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
 
-        Typeface face = Typeface.createFromAsset(getAssets(), "font/" + fonts);
+        Typeface face = KookyarFonts.get(this, fonts);
 
         ivKamancheh = (LinearLayout) findViewById(R.id.layout_sim);
         Kamancheh1 = (Button) findViewById(R.id.kamancheh_1);
@@ -303,13 +324,13 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
                 lastTunedIndex = -1;
                 if (isChecked) {
                     Toast.makeText(getApplicationContext(),
-                            "توجه : در صورتی که اولین بار است ساز خود را با کوک یار کوک می کنید، بهتر است سیم ها را به صورت دستی انتخاب کنید",
+                            com.kookyar.common.R.string.kookyar_auto_detect_hint,
                             Toast.LENGTH_LONG).show();
                 }
             }
         });
 
-        pitchLabel.setText(PersianReshape.forDisplay(this, "سیم مورد نظر جهت کوک کردن را انتخاب کنید"));
+        pitchLabel.setText(getString(com.kookyar.common.R.string.kookyar_gauge_pick_string));
 
         resetStringButtonTints();
 
@@ -352,7 +373,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         resetStringButtonTints();
         ivKamancheh.setBackgroundResource(0);
         pitchView.setCenterPitch(0);
-        pitchLabel.setText(PersianReshape.forDisplay(this, "سیم مورد نظر جهت کوک کردن را انتخاب کنید"));
+        pitchLabel.setText(getString(com.kookyar.common.R.string.kookyar_gauge_pick_string));
 
         if (getprefs != null) {
             getprefs.edit().putInt("kook", position).apply();
@@ -469,7 +490,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         triggerNote((float) (Miditone[i] - nimpardehSub));
         pitchLabel.setText(PersianReshape.forDisplay(this, label));
         ivKamancheh.setBackgroundResource(imageRes);
-        YoYo.with(Techniques.Landing).duration(700).playOn(ivKamancheh);
+        Anim.landing(ivKamancheh);
         Button[] btns = {Kamancheh1, Kamancheh2, Kamancheh3, Kamancheh4};
         selectStringButton(btns[i]);
     }
@@ -479,7 +500,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         lastTunedIndex = i;
         selectedStringIndex = i;
         int[] imgs = {R.drawable.kamancheh1, R.drawable.kamancheh2, R.drawable.kamancheh3, R.drawable.kamancheh4};
-        String[] labels = {"\u0633\u06CC\u0645 \u0627\u0648\u0644", "\u0633\u06CC\u0645 \u062F\u0648\u0645", "\u0633\u06CC\u0645 \u0633\u0648\u0645", "\u0633\u06CC\u0645 \u0686\u0647\u0627\u0631\u0645"};
+        String[] labels = {getString(R.string.sim_1), getString(R.string.sim_2), getString(R.string.sim_3), getString(R.string.sim_4)};
         triggerNote2((float) (Miditone[i] - nimpardehSub));
         pitchLabel.setText(PersianReshape.forDisplay(this, labels[i]));
         ivKamancheh.setBackgroundResource(imgs[i]);
@@ -493,13 +514,13 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         if (viewId == R.id.tuning) {
             tuning.setChecked(!tuning.isChecked());
         } else if (viewId == R.id.kamancheh_1) {
-            selectString(0, R.drawable.kamancheh1, "\u0633\u06CC\u0645 \u0627\u0648\u0644");
+            selectString(0, R.drawable.kamancheh1, getString(R.string.sim_1));
         } else if (viewId == R.id.kamancheh_2) {
-            selectString(1, R.drawable.kamancheh2, "\u0633\u06CC\u0645 \u062F\u0648\u0645");
+            selectString(1, R.drawable.kamancheh2, getString(R.string.sim_2));
         } else if (viewId == R.id.kamancheh_3) {
-            selectString(2, R.drawable.kamancheh3, "\u0633\u06CC\u0645 \u0633\u0648\u0645");
+            selectString(2, R.drawable.kamancheh3, getString(R.string.sim_3));
         } else if (viewId == R.id.kamancheh_4) {
-            selectString(3, R.drawable.kamancheh4, "\u0633\u06CC\u0645 \u0686\u0647\u0627\u0631\u0645");
+            selectString(3, R.drawable.kamancheh4, getString(R.string.sim_4));
         }
     }
 

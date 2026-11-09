@@ -1,7 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.App</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryColorDark</item>
         <item name="colorAccent">@color/accentColor</item>
@@ -26,4 +30,9 @@
         <item name="android:textColorSecondary">@android:color/white</item>
     </style>
 
+
+    <style name="PreferenceThemeOverlay.App" parent="PreferenceThemeOverlay.v14.Material">
+        <item name="android:textColorPrimary">@color/kookyar_on_surface</item>
+        <item name="android:textColorSecondary">@color/kookyar_on_surface_variant</item>
+    </style>
 </resources>

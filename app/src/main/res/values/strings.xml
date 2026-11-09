@@ -118,17 +118,17 @@
     <string name="kook_select">Select tuning</string>
     <string-array name="kouk">
         <item>Mi-La-Re-Sol</item>
-        <item>شوRe: (Mi-La-Re-Mi)</item>
-        <item>ابوعطا: (Mi-La-Mi-La)</item>
-        <item>بیات تReک: (Mi-La-Re-Sol)</item>
-        <item>افشاReی و ماهوRe: (Mi-La-Re-La)</item>
-        <item>دشتی: (Mi-La-Si-Sol)</item>
-        <item>همایون و سه‌گاه: (Mi-La-Re-Fa سReی)</item>
-        <item>اصفهان: (Mi-La-Mi-La)</item>
-        <item>شوشتReی: (Mi-La-Mi-Mi)</item>
-        <item>چهاReگاه: (Mi-La-Re-La)</item>
+        <item>Shur: (Mi-La-Re-Mi)</item>
+        <item>Abu-Ata: (Mi-La-Mi-La)</item>
+        <item>Bayat-e Tork: (Mi-La-Re-Sol)</item>
+        <item>Afshari &amp; Mahur: (Mi-La-Re-La)</item>
+        <item>Dashti: (Mi-La-Si-Sol)</item>
+        <item>Homayun &amp; Segah: (Mi-La-Re-Fa sori)</item>
+        <item>Isfahan: (Mi-La-Mi-La)</item>
+        <item>Shushtari: (Mi-La-Mi-Mi)</item>
+        <item>Chahargah: (Mi-La-Re-La)</item>
         <item>Re-La-Re-La</item>
-        <item>Mi-La-Mi-Fa سReی</item>
+        <item>Mi-La-Mi-Fa sori</item>
     </string-array>
     <string-array name="kookChange">
         <item>Tune at standard pitch</item>

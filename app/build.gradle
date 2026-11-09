@@ -14,10 +14,10 @@ android {
 
     defaultConfig {
         applicationId 'com.TuningApps.KamanchehTuner'
-        minSdk 21
+        minSdk 28
         targetSdk 37
-        versionName '3.1.0'
-        versionCode 31
+        versionName '3.2.0'
+        versionCode 32
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -77,15 +77,16 @@ android {
 dependencies {
     implementation 'com.kookyar:kookyar-common'
 
-    implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'androidx.core:core:1.16.0'
-    implementation 'androidx.activity:activity:1.11.0'
-    implementation 'androidx.fragment:fragment:1.8.9'
+    implementation 'androidx.appcompat:appcompat:1.8.0'
+    implementation 'androidx.core:core:1.19.1'
+    implementation 'androidx.activity:activity:1.13.0'
+    implementation 'androidx.fragment:fragment:1.9.1'
     implementation 'androidx.preference:preference:1.2.1'
-    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'com.google.android.material:material:1.14.0'
 
-    implementation 'com.daimajia.easing:library:2.4@aar'
-    implementation 'com.daimajia.androidanimations:library:2.4@aar'
 
-    implementation 'io.github.libpd.android:pd-core:1.2.1-rc6'
+    // libpd 1.4.3 snapshot (2026-10-26), vendored so the build is reproducible: its native
+    // libraries are 16 KB page-aligned, which Google Play requires for targetSdk 35+.
+    // The last Maven release (1.2.1-rc6) is not. Shared by all KookYar apps.
+    implementation files("${rootProject.projectDir}/../kookyar_common/libs/pd-core-1.4.3-20261026.aar")
 }
