@@ -53,6 +53,7 @@ import com.kookyar.common.MetronomeLauncher;
 import com.kookyar.common.RadifLauncher;
 import com.kookyar.common.PersianReshape;
 import com.kookyar.common.PitchView;
+import com.kookyar.common.InstrumentView;
 import com.kookyar.common.TunerPitchCoordinator;
 
 
@@ -67,7 +68,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
 
     private PdUiDispatcher dispatcher;
     public String fonts = "BZar.ttf";
-    private LinearLayout ivKamancheh;
+    private InstrumentView ivKamancheh;
     private Button Kamancheh1, Kamancheh2, Kamancheh3, Kamancheh4;
     private TextView pitchLabel;
     private PitchView pitchView;
@@ -236,7 +237,8 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
 
         Typeface face = KookyarFonts.get(this, fonts);
 
-        ivKamancheh = (LinearLayout) findViewById(R.id.layout_sim);
+        ivKamancheh = findViewById(R.id.layout_sim);
+        ivKamancheh.setOnStringSelectedListener(this::selectString);
         Kamancheh1 = (Button) findViewById(R.id.kamancheh_1);
         Kamancheh1.setOnClickListener(this);
         Kamancheh1.setTypeface(face);
@@ -371,7 +373,8 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         selectedStringIndex = -1;
         lastTunedIndex = -1;
         resetStringButtonTints();
-        ivKamancheh.setBackgroundResource(0);
+        ivKamancheh.setSelectedString(-1);
+        ivKamancheh.setStringNotes(displayedNotes());
         pitchView.setCenterPitch(0);
         pitchLabel.setText(getString(com.kookyar.common.R.string.kookyar_gauge_pick_string));
 
@@ -388,6 +391,7 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
             case 3: nimpardehSub = 2; break;
             default: nimpardehSub = 0; break;
         }
+        ivKamancheh.setStringNotes(displayedNotes());
 
         if (selectedStringIndex >= 0) {
             triggerNote2((float) (Miditone[selectedStringIndex] - nimpardehSub));
@@ -484,26 +488,39 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         return RealMidi;
     }
 
-    private void selectString(int i, int imageRes, String label) {
+    private void selectString(int i) {
         selectedStringIndex = i;
         lastTunedIndex = -1;
         triggerNote((float) (Miditone[i] - nimpardehSub));
-        pitchLabel.setText(PersianReshape.forDisplay(this, label));
-        ivKamancheh.setBackgroundResource(imageRes);
+        pitchLabel.setText(PersianReshape.forDisplay(this, stringLabel(i)));
+        ivKamancheh.setSelectedString(i);
         Anim.landing(ivKamancheh);
         Button[] btns = {Kamancheh1, Kamancheh2, Kamancheh3, Kamancheh4};
         selectStringButton(btns[i]);
+    }
+
+    /** "String n" in the current language. */
+    private String stringLabel(int i) {
+        int[] names = {R.string.sim_1, R.string.sim_2, R.string.sim_3, R.string.sim_4};
+        return getString(names[i]);
+    }
+
+    /** Notes the picture labels its strings with: the tuning less the transpose. */
+    private double[] displayedNotes() {
+        double[] notes = new double[Miditone.length];
+        for (int i = 0; i < notes.length; i++) {
+            notes[i] = Miditone[i] - nimpardehSub;
+        }
+        return notes;
     }
 
     private void autoTune(int i) {
         if (i == lastTunedIndex) return;
         lastTunedIndex = i;
         selectedStringIndex = i;
-        int[] imgs = {R.drawable.kamancheh1, R.drawable.kamancheh2, R.drawable.kamancheh3, R.drawable.kamancheh4};
-        String[] labels = {getString(R.string.sim_1), getString(R.string.sim_2), getString(R.string.sim_3), getString(R.string.sim_4)};
         triggerNote2((float) (Miditone[i] - nimpardehSub));
-        pitchLabel.setText(PersianReshape.forDisplay(this, labels[i]));
-        ivKamancheh.setBackgroundResource(imgs[i]);
+        pitchLabel.setText(PersianReshape.forDisplay(this, stringLabel(i)));
+        ivKamancheh.setSelectedString(i);
         Button[] btns = {Kamancheh1, Kamancheh2, Kamancheh3, Kamancheh4};
         selectStringButton(btns[i]);
     }
@@ -514,13 +531,13 @@ public class KamanchehTuner extends AppCompatActivity implements OnClickListener
         if (viewId == R.id.tuning) {
             tuning.setChecked(!tuning.isChecked());
         } else if (viewId == R.id.kamancheh_1) {
-            selectString(0, R.drawable.kamancheh1, getString(R.string.sim_1));
+            selectString(0);
         } else if (viewId == R.id.kamancheh_2) {
-            selectString(1, R.drawable.kamancheh2, getString(R.string.sim_2));
+            selectString(1);
         } else if (viewId == R.id.kamancheh_3) {
-            selectString(2, R.drawable.kamancheh3, getString(R.string.sim_3));
+            selectString(2);
         } else if (viewId == R.id.kamancheh_4) {
-            selectString(3, R.drawable.kamancheh4, getString(R.string.sim_4));
+            selectString(3);
         }
     }
 
